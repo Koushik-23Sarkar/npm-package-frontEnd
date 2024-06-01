@@ -7,6 +7,24 @@ import util from 'util';
 import fs from 'fs';
 const execPromise = util.promisify(exec);
 
+const help =
+`
+
+${chalk.yellow.bold("This NPM package helps you to create frontEnd Project.")}
+
+
+if you run: ${chalk.blue.bold("npx np-new -fe <project-name>")+"\n"+"\n"+
+chalk.yellow("then it will ask some question.")+"\n"+
+chalk.yellow("afterthat it will create a basic frontEnd setup...")+"\n"+"\n"+
+chalk.red("NOTE: In This Version, React+Tailwind setup will not work...")+"\n"+"\n"+
+chalk.yellow("So, if you give-----")}
+Do you need React? (y/n) y
+Do you need tailwind? (y/n) y
+${chalk.red("then, it will not work.")}${chalk.yellow(" But in upcoming versions we will add it...")}
+
+
+`;
+
 const re1 =
 `<!DOCTYPE html>
 <html lang="en">
@@ -196,18 +214,16 @@ export function Testfun(){
 
     const input = process.argv;
 
-    if(input.length == 2){      //npx test
-        console.log(chalk.yellow("if you need frontEnd setup: ")+chalk.blue.bold("npx test frontend"));
-        console.log(chalk.yellow("if you need basic backend setup: ")+chalk.blue.bold("npx test backend"));
-        console.log(chalk.yellow("if you need both: ")+chalk.blue.bold("npx test -fb"));
-        console.log(chalk.yellow("if you need help: ")+chalk.blue.bold("npx test -h"));    
-        return;
+    if(input.length == 2){      //npx np-new
+        console.log(chalk.yellow("if you need frontEnd setup: ")+chalk.blue.bold("npx np-new -fe <your-frontEnd-Project-name>"));
+        console.log(chalk.yellow("if you need help: ")+chalk.blue.bold("npx np-new -h"));    
+        process.exit(0);
     }
-    if(input[2].toLowerCase()=="-h"){   //npx test -h
-        console.log("HELP");
-        return;
+    if(input[2].toLowerCase()=="-h"){   //npx np-new -h
+        console.log(help);
+        process.exit(0);
     }
-    if(input[2].toLowerCase() == '-fe'){  //npx test -fe
+    if(input[2].toLowerCase() == '-fe'){  //npx np-new -fe
             frontEndProjectName = input[3];
             console.log(frontEndProjectName);
             console.log("frontEnd");
