@@ -32,7 +32,7 @@ const re1 =
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <h1>HRLLO WORLD</h1>
@@ -46,10 +46,10 @@ const re3=
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
-<body>
-    <h1 className="bg-green-900 text-black">HRLLO WORLD</h1>
+<body class="bg-slate-600">
+        <h1 class="text-4xl text-white">Helo World!</h1>
 </body>
 </html>
                 `;
@@ -71,6 +71,33 @@ module.exports = {
 }
 
 `;
+
+const rt1 = 
+`/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+`;
+
+const rt2 =
+`import './App.css';
+
+export default function App() {
+    return (
+      <h1 className="text-3xl font-bold">
+        Hello world!
+      </h1>
+    )
+  }
+`;
+
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -105,34 +132,27 @@ export default function App(){
     fs.writeFileSync(pathName+'\\App.jsx',re);
 }
 async function reactSetUpDownload(frontEndProjectName){
-        await execPromise(`npm create vite@latest ${frontEndProjectName} -- --template react`,  (error,stdout, stderr) => {   //npm create vite@latest my-vue-app -- --template vue
-            if(error){
-                console.error(`error: ${stderr}`);
-                return;
-            }
-            if(stderr){
-                console.error(`stderr: ${stderr}`);
-                return;
-            }
-            //console.log(stdout);
+        await execPromise(`npm create vite@latest ${frontEndProjectName} -- --template react`,  () => {   //npm create vite@latest my-vue-app -- --template react
             console.log("npm install start......");
+            console.log(chalk.blue("Some time it take some time.So, plz wait..."));
             const targetDir =  process.cwd()+"\\"+frontEndProjectName;
             process.chdir(targetDir);
             
             removingReactFile();
-            exec('npm install', (error, stdout, stderr) => {
+            exec('npm install', () => {
     
                 //console.log(`Output: ${stdout}`);
-                console.log("npm install end...")
-                
-                console.log(chalk.yellow("open: ")+chalk.blue.underline("http://localhost:5173/"));
-                exec('npm run dev');
+                console.log(chalk.yellow("Setup complete.........."));
+
+                console.log(`cd ${frontEndProjectName}`);
+                console.log("npm run dev");
             });
         })
 }
 
 function tailwindSetUpDownload(frontEndProjectName){
     console.log("Only tailwind Setup....");
+    console.log(chalk.blue("Some time it take some time.So, plz wait..."));
     exec(`mkdir ${frontEndProjectName}`,()=>{
         const filePathTail = process.cwd()+"\\"+frontEndProjectName;
         exec("npx tailwindcss init",{cwd:filePathTail},()=>{
@@ -149,8 +169,10 @@ function tailwindSetUpDownload(frontEndProjectName){
                         const outputFileForTailwind = process.cwd()+"\\dist\\style.css";
                         exec(`npx tailwindcss -i ${inputFileForTailwind} -o ${outputFileForTailwind}`,()=>{
                             console.log("your tailwind css setup is complete!")
-                            console.log(`cd ${frontEndProjectName}`)
-                            console.log(`code .`);
+                            console.log(chalk.yellow(`cd ${frontEndProjectName}\n`));
+                            console.log(chalk.yellow("code . or Open your project in VS code"));
+                            console.log(chalk.yellow("Open terminal and then :\n"));
+                            console.log(`npx tailwindcss -i ./src/input.css -o ./dist/style.css --watch`);
                         })
                      });
                 });
@@ -161,7 +183,26 @@ function tailwindSetUpDownload(frontEndProjectName){
 }
 
 function ReacttailwindSetUpDownload(frontEndProjectName){
-    console.log("currectly working on it... plz try another options..");
+    exec(`npm create vite@latest ${frontEndProjectName} -- --template react`,()=>{
+        const pathRTname = process.cwd()+"\\"+frontEndProjectName;
+        console.log("NPM install start...");
+        console.log(chalk.blue("Some time it take some time.So, plz wait..."));
+        exec("npm install -D tailwindcss postcss autoprefixer",{cwd: pathRTname},()=>{
+            console.log("NPM install End...")
+            exec("npx tailwindcss init -p",{cwd: pathRTname},()=>{
+                fs.writeFileSync(pathRTname+`\\tailwind.config.js`,rt1);
+                fs.writeFileSync(pathRTname+`\\src\\index.css`,re2);
+                fs.writeFileSync(pathRTname+`\\src\\App.jsx`,rt2);
+                fs.unlinkSync(pathRTname+"\\public\\vite.svg");
+                fs.unlinkSync(pathRTname+"\\src\\assets\\react.svg");
+
+                console.log(chalk.yellow("Setup complete.........."));
+
+                console.log(`cd ${frontEndProjectName}`);
+                console.log("npm run dev");
+            })
+        })
+    })
 }
 
 function createIndexHtmlStyleCssFiles(frontEndProjectName){
@@ -172,8 +213,9 @@ function createIndexHtmlStyleCssFiles(frontEndProjectName){
             exec("touch style.css",{ cwd: filePath },()=>{
                 process.chdir(filePath);
                 fs.writeFileSync(process.cwd()+'\\index.html',re1);
-                console.log(`cd ${frontEndProjectName}`)
-                console.log("code .");
+
+                console.log(chalk.yellow(`cd ${frontEndProjectName}\n`));
+                console.log(chalk.yellow("code . or Open your project in VS code"));
             })
         })
     });
